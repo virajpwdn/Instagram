@@ -36,12 +36,12 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.statics.hashPassword = async function (password) {
-    if(!password) throw new Error("Password is required");
+  if (!password) throw new Error("Password is required");
   return await bcrypt.hash(password, 10);
 };
 
 userSchema.methods.comparePassword = async function (password) {
-    if(!password) throw new Error("Password is required");
+  if (!password) throw new Error("Password is required");
   return await bcrypt.compare(password, this.password);
 };
 

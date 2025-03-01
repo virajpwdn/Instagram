@@ -1,0 +1,25 @@
+import userModel from "../models/user.js";
+
+export const createUser = async ({ username, email, password }) => {
+//   if (!username || !email || !password) {
+//     throw new Error("All fields are required [username, email, password]");
+//   }
+
+  const isUserAlreadyExists = await userModel.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  if (isUserAlreadyExists) throw new Error("user already exists");
+  console.log(password);
+  const hashPassword = await userModel.hashPassword(password);
+  const user = new userModel({
+    username,
+    email,
+    password: hashPassword,
+  });
+
+  await user.save();
+  delete user._doc.password;
+
+  return user;
+};
