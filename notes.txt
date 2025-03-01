@@ -1,0 +1,6 @@
+1. Folder Structure -> server, app.js, database, router, controller, middleware
+2. Authenticatin
+
+
+Morgen is a middleware which is used to track time of response
+app.use(morgan("dev"));
