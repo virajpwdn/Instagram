@@ -4,3 +4,5 @@
 
 Morgen is a middleware which is used to track time of response
 app.use(morgan("dev"));
+
+redis -> used for caching

@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import redis from '../services/redis.service.js'
 
 export const registerUserValidation = [
   body("username")
