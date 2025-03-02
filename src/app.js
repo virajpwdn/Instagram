@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser())
 
-app.use("/", userRouter);
+app.use("/users", userRouter);
 
 
 

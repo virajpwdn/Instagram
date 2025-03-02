@@ -6,3 +6,6 @@ Morgen is a middleware which is used to track time of response
 app.use(morgan("dev"));
 
 redis -> used for caching
+
+parseJSON -> it converts json data into string => user = JSON.parse(user)
+JSON.Stringify(user) -> converts string data into json => JSON.stringify(user)
