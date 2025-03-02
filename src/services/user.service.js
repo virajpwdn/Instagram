@@ -1,9 +1,9 @@
 import userModel from "../models/user.js";
 
 export const createUser = async ({ username, email, password }) => {
-//   if (!username || !email || !password) {
-//     throw new Error("All fields are required [username, email, password]");
-//   }
+  if (!username || !email || !password) {
+    throw new Error("All fields are required [username, email, password]");
+  }
 
   const isUserAlreadyExists = await userModel.findOne({
     $or: [{ username }, { email }],
@@ -22,4 +22,17 @@ export const createUser = async ({ username, email, password }) => {
   delete user._doc.password;
 
   return user;
+};
+
+export const loginUser = async ({ email, password }) => {
+  if (!email || !password) throw new Error("All fields are requied");
+
+  const findEmail = await userModel.findOne({ email });
+  if (!findEmail) throw new Error("Invalid credientials");
+
+  const verifyPassword = await findEmail.comparePassword(password);
+  if (!verifyPassword) throw new Error("Invalid credientials");
+
+  delete findEmail._doc.password;
+  return findEmail
 };

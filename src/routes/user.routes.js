@@ -10,4 +10,10 @@ userRouter.post(
   userController.createUserController
 );
 
+userRouter.post(
+  "/login",
+  userMiddleware.loginValidation,
+  userController.loginController
+);
+
 export default userRouter;
