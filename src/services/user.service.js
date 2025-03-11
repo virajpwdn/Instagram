@@ -1,4 +1,5 @@
 import userModel from "../models/user.js";
+import redis from "./redis.service.js";
 
 export const createUser = async ({ username, email, password }) => {
   if (!username || !email || !password) {
@@ -10,7 +11,7 @@ export const createUser = async ({ username, email, password }) => {
   });
 
   if (isUserAlreadyExists) throw new Error("user already exists");
-  console.log(password);
+  // console.log(password);
   const hashPassword = await userModel.hashPassword(password);
   const user = new userModel({
     username,
@@ -32,6 +33,8 @@ export const loginUser = async ({ email, password }) => {
 
   const verifyPassword = await findEmail.comparePassword(password);
   if (!verifyPassword) throw new Error("Invalid credientials");
+
+
 
   delete findEmail._doc.password;
   return findEmail
