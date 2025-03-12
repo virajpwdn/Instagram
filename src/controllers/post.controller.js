@@ -109,21 +109,31 @@ export const getAllPostOfLoggedInUser = async (req, res) => {
 export const commentController = async (req, res) => {
   try {
     const err = validationResult(req);
-    if (!err.isEmpty()) res.status(400).json({ error: err.array() });
-    const { text } = req.body;
-    if (!text) throw new Error("Text is missing, Enter your comment");
-    const { postId } = req.params;
-    if (!postId) throw new Error("Post is required");
-    const verifyId = CommentModel.verifyMongoId(postId);
+    if (!err.isEmpty()) return res.status(400).json({ error: err.array() });
 
-    const findPost = await PostModel.findById(postId);
-    if (!findPost) throw new Error("Post does not exits");
+    const { text, parentCommentId } = req.body;
+    const {postId} = req.params || req.query;
+
+    const currentPost = await PostModel.findById({_id:postId});
+    if (!currentPost) throw new Error("Post does not exits");
+
+    if (parentCommentId) {
+      const isparentCommentIdExists = await CommentModel.findById(
+        parentCommentId
+      );
+
+      if (!isparentCommentIdExists)
+        res.status(404).json({ message: "parent comment not found" });
+    }
 
     const comment = await CommentModel.create({
       text: text,
       postId: postId,
       userId: req.user._id,
+      parentCommentId,
     });
+
+    await comment.incrementCommentCount();
 
     res.status(201).json({ data: comment });
   } catch (error) {

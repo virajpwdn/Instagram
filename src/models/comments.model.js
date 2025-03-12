@@ -19,7 +19,7 @@ const commentSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  parentComment: {
+  parentCommentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "comment",
   },
