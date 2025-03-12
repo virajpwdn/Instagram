@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema(
       type: String,
     },
     media: {
-      type: String,
+      type: Object,
       required: [true, "Media is required"],
     },
     author: {
@@ -15,6 +15,16 @@ const postSchema = new mongoose.Schema(
       ref: "user",
       required: [true, "Author is required"],
     },
+    likeCount: {
+      type: Number,
+      default: 0,
+    },
+    whoLiked: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        // ref: "user"
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -27,16 +37,35 @@ postSchema.statics.getAllPosts = async function (authorId) {
   return posts;
 };
 
-postSchema.methods.updateCaption = async function(caption){
-    this.caption = caption;
-    await this.save();
-    return this;
+postSchema.methods.updateCaption = async function (caption) {
+  this.caption = caption;
+  await this.save();
+  return this;
+};
+
+postSchema.statics.getRecentPosts = async function (limit) {
+  if (!limit) throw new Error("Limit is required");
+  const getPost = await this.find().sort({ createdAt: -1 }).limit(limit);
+  return getPost;
+};
+
+postSchema.statics.isValidMongoId = async function (postId) {
+  if(!postId) throw new Error("Post Id is required");
+  return mongoose.Types.ObjectId.isValid(postId);
 }
 
-postSchema.statics.getRecentPosts = async function(limit){
-    if(!limit) throw new Error("Limit is required");
-    const getPost = await this.find().sort({createdAt: -1}).limit(limit);
-    return getPost
+postSchema.methods.incrementLike = async function (loggedInuser) {  
+  this.likeCount += 1;
+  this.whoLiked.push(loggedInuser)
+  await this.save();
+  return this;
+}
+
+postSchema.methods.decrementLike = async function (loggedInuser) {
+  this.likeCount -= 1;
+  this.whoLiked.pop(loggedInuser)
+  await this.save();
+  return this;
 }
 
 const postModel = mongoose.model("post", postSchema);
