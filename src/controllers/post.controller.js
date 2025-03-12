@@ -29,31 +29,60 @@ export const createPost = async (req, res, next) => {
   }
 };
 
-export const likeController = async (req,res)=>{
+export const likeController = async (req, res) => {
   try {
-    const {postId} = req.params;
-    if(!postId) throw new Error("Post Id is required");
+    const { postId } = req.params;
+    if (!postId) throw new Error("Post Id is required");
     const isValidPostId = PostModel.isValidMongoId(postId);
-    if(!isValidPostId) throw new Error("Invalid Post Id");
+    if (!isValidPostId) throw new Error("Invalid Post Id");
 
     const loggedInuser = req.user._id;
 
-    const isPostLikedByUser = await PostModel.findOne({_id: postId});
+    const isPostLikedByUser = await PostModel.findOne({ _id: postId });
 
-    if(!isPostLikedByUser) {
-      return res.status(404).json({message: "Post not found"})
+    if (!isPostLikedByUser) {
+      return res.status(404).json({ message: "Post not found" });
     }
 
-    if(isPostLikedByUser.whoLiked.includes(loggedInuser)) {
+    if (isPostLikedByUser.whoLiked.includes(loggedInuser)) {
+      await LikeModel.findOneAndDelete({ post: postId });
       await isPostLikedByUser.decrementLike(loggedInuser);
-      return res.status(200).json({message: "Disliked"});
+      return res.status(200).json({ message: "Disliked" });
     }
 
+    await LikeModel.create({ post: postId, user: loggedInuser });
     await isPostLikedByUser.incrementLike(loggedInuser);
-    res.status(200).json({message: "You have Liked the post"})
-
+    res.status(200).json({ message: "You have Liked the post" });
   } catch (error) {
     console.log(error);
-    res.status(400).json({message: error.message})
+    res.status(400).json({ message: error.message });
   }
-}
+};
+
+export const getAllPostController = async (req, res) => {
+  try {
+    const limit = req.query.limit || 10;
+    const skip = req.query.skip || 0;
+
+    const recentPosts = await PostModel.getRecentPosts(limit, skip);
+
+    res.status(200).json({ posts: recentPosts });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getOnePostController = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const verifyPostId = PostModel.isValidMongoId(postId);
+    if (!verifyPostId) throw new Error("Invalid Id");
+
+    const findPost = await PostModel.findOne({ _id: postId });
+    if (!findPost) throw new Error("Post does not exists!");
+
+    res.status(200).json({ post: findPost });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

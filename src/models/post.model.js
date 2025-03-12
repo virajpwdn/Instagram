@@ -22,7 +22,7 @@ const postSchema = new mongoose.Schema(
     whoLiked: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: "user"
+        ref: "user",
       },
     ],
   },
@@ -43,30 +43,34 @@ postSchema.methods.updateCaption = async function (caption) {
   return this;
 };
 
-postSchema.statics.getRecentPosts = async function (limit) {
+postSchema.statics.getRecentPosts = async function (limit, skip) {
   if (!limit) throw new Error("Limit is required");
-  const getPost = await this.find().sort({ createdAt: -1 }).limit(limit);
+  const getPost = await this.find()
+    .sort({ createdAt: -1 })
+    .limit(limit > 10 ? 10 : limit)
+    .skip(skip)
+    .populate("author");
   return getPost;
 };
 
 postSchema.statics.isValidMongoId = async function (postId) {
-  if(!postId) throw new Error("Post Id is required");
+  if (!postId) throw new Error("Post Id is required");
   return mongoose.Types.ObjectId.isValid(postId);
-}
+};
 
-postSchema.methods.incrementLike = async function (loggedInuser) {  
+postSchema.methods.incrementLike = async function (loggedInuser) {
   this.likeCount += 1;
-  this.whoLiked.push(loggedInuser)
+  this.whoLiked.push(loggedInuser);
   await this.save();
   return this;
-}
+};
 
 postSchema.methods.decrementLike = async function (loggedInuser) {
   this.likeCount -= 1;
-  this.whoLiked.pop(loggedInuser)
+  this.whoLiked.pop(loggedInuser);
   await this.save();
   return this;
-}
+};
 
 const postModel = mongoose.model("post", postSchema);
 
