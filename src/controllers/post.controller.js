@@ -2,6 +2,8 @@ import { generateCaptionFromImageBuffer } from "../services/ai.service.js";
 import { uploadFile } from "../services/cloud.service.js";
 import PostModel from "../models/post.model.js";
 import LikeModel from "../models/likes.model.js";
+import CommentModel from "../models/comments.model.js";
+import { validationResult } from "express-validator";
 
 export const createPost = async (req, res, next) => {
   try {
@@ -78,11 +80,54 @@ export const getOnePostController = async (req, res) => {
     const verifyPostId = PostModel.isValidMongoId(postId);
     if (!verifyPostId) throw new Error("Invalid Id");
 
-    const findPost = await PostModel.findOne({ _id: postId });
+    const findPost = await PostModel.findOne({ _id: postId }).populate(
+      "author"
+    );
     if (!findPost) throw new Error("Post does not exists!");
 
     res.status(200).json({ post: findPost });
   } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getAllPostOfLoggedInUser = async (req, res) => {
+  try {
+    // const { userId } = req.params;
+    // if (!userId) throw new Error("Invalid, userId is missing");
+    console.log(req.user._id);
+    const loggedInUserPosts = await PostModel.find({ author: req.user._id });
+    if (!loggedInUserPosts)
+      return res.status(404).json({ message: "You don't have any post." });
+
+    res.status(200).json({ loggedInUserPosts });
+  } catch (error) {
+    res.status(400).json({ message: error.message } || "Internal Server Error");
+  }
+};
+
+export const commentController = async (req, res) => {
+  try {
+    const err = validationResult(req);
+    if (!err.isEmpty()) res.status(400).json({ error: err.array() });
+    const { text } = req.body;
+    if (!text) throw new Error("Text is missing, Enter your comment");
+    const { postId } = req.params;
+    if (!postId) throw new Error("Post is required");
+    const verifyId = CommentModel.verifyMongoId(postId);
+
+    const findPost = await PostModel.findById(postId);
+    if (!findPost) throw new Error("Post does not exits");
+
+    const comment = await CommentModel.create({
+      text: text,
+      postId: postId,
+      userId: req.user._id,
+    });
+
+    res.status(201).json({ data: comment });
+  } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };

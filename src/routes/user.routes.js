@@ -16,10 +16,14 @@ userRouter.post(
   userController.loginController
 );
 
-userRouter.get("/profile", userMiddleware.authUser, (req,res)=>{
+userRouter.get("/profile", userMiddleware.authUser, (req, res) => {
   res.send(req.user);
-})
+});
 
-userRouter.get("/logout", userMiddleware.authUser, userController.logoutController)
+userRouter.get(
+  "/logout",
+  userMiddleware.authUser,
+  userController.logoutController
+);
 
 export default userRouter;

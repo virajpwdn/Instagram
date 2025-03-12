@@ -1,9 +1,30 @@
 import multer from "multer";
+import { body, validationResult } from "express-validator";
+import mongoose from "mongoose";
 
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024 * 5 }, /* 5MB */
+  limits: { fileSize: 1024 * 1024 * 5 } /* 5MB */,
 });
 
 export const handleFileUpload = upload.single("image");
+
+export const validateComment = [
+  body("postId")
+    .isEmpty()
+    .withMessage("Post is required")
+    .custom((value) => {
+      return mongoose.Types.ObjectId.isValid(value);
+    })
+    .withMessage("Invalid Id"),
+  body("text")
+    .isEmpty()
+    .withMessage("Enter message, comment field cannot be empty"),
+  body("parentComment")
+    .optional()
+    .custom((value) => {
+      return mongoose.Types.ObjectId.isValid(value);
+    })
+    .withMessage("Invalid Parent Comment Id"),
+];

@@ -28,14 +28,12 @@ export const createUser = async ({ username, email, password }) => {
 export const loginUser = async ({ email, password }) => {
   if (!email || !password) throw new Error("All fields are requied");
 
-  const findEmail = await userModel.findOne({ email });
+  const findEmail = await userModel.findOne({ email }).select("+password");
   if (!findEmail) throw new Error("Invalid credientials");
 
   const verifyPassword = await findEmail.comparePassword(password);
   if (!verifyPassword) throw new Error("Invalid credientials");
 
-
-
   delete findEmail._doc.password;
-  return findEmail
+  return findEmail;
 };
