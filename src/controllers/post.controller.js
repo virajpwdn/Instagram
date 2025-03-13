@@ -168,7 +168,7 @@ export const getMessagesController = async (req, res) => {
         { senderId: receiverId, receiverId: senderId },
       ],
     });
-
+ 
     if (!findMessages) throw new Error("Messages not found");
 
     res
