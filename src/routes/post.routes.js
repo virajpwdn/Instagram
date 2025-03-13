@@ -44,4 +44,10 @@ postRouter.post(
   postController.commentController
 );
 
+postRouter.get(
+  "/get/messages/:senderId/:receiverId",
+  userMiddleware.authUser,
+  postController.getMessagesController
+);
+
 export default postRouter;

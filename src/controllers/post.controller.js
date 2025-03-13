@@ -4,6 +4,8 @@ import PostModel from "../models/post.model.js";
 import LikeModel from "../models/likes.model.js";
 import CommentModel from "../models/comments.model.js";
 import { validationResult } from "express-validator";
+import messageModel from "../models/message.model.js";
+import mongoose from "mongoose";
 
 export const createPost = async (req, res, next) => {
   try {
@@ -112,12 +114,12 @@ export const commentController = async (req, res) => {
     const err = validationResult(req);
     if (!err.isEmpty()) return res.status(400).json({ error: err.array() });
 
-    const { userId ,text, parentCommentId } = req.body;
-    const {postId} = req.params;
+    const { userId, text, parentCommentId } = req.body;
+    const { postId } = req.params;
 
-    if(userId !== req.user._id) throw new Error("LoggedIn user Id not match");
+    if (userId !== req.user._id) throw new Error("LoggedIn user Id not match");
 
-    const currentPost = await PostModel.findById({_id:postId});
+    const currentPost = await PostModel.findById({ _id: postId });
     if (!currentPost) throw new Error("Post does not exits");
 
     if (parentCommentId) {
@@ -135,7 +137,7 @@ export const commentController = async (req, res) => {
       text: text,
       postId: postId,
       userId: userId,
-      parentCommentId : parentComment.parentCommentId || parentCommentId
+      parentCommentId: parentComment.parentCommentId || parentCommentId,
     });
 
     await currentPost.incrementCommentCount();
@@ -144,5 +146,39 @@ export const commentController = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const getMessagesController = async (req, res) => {
+  try {
+    console.log("hello");
+    const { senderId, receiverId } = req.params;
+    // TODO: Check why req.params are not working??
+
+    if (!senderId || !receiverId)
+      throw new Error("Sender Id and Receiver Id are required");
+    const isValidSenderMongoId = mongoose.Types.ObjectId.isValid(senderId);
+    const isValidReceiverMongoID = mongoose.Types.ObjectId.isValid(receiverId);
+    if (!isValidSenderMongoId || !isValidReceiverMongoID)
+      throw new Error("Invalid mongo id");
+
+    const findMessages = await messageModel.find({
+      $or: [
+        { senderId: senderId, receiverId: receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    });
+
+    if (!findMessages) throw new Error("Messages not found");
+
+    res
+      .status(200)
+      .json({
+        data: findMessages,
+        messageCount: findMessages.length,
+        message: "Messages successfully fetched",
+      });
+  } catch (error) {
+    res.status(400).json({message: error.message})
   }
 };
