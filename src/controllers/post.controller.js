@@ -108,11 +108,14 @@ export const getAllPostOfLoggedInUser = async (req, res) => {
 
 export const commentController = async (req, res) => {
   try {
+    let parentComment = null;
     const err = validationResult(req);
     if (!err.isEmpty()) return res.status(400).json({ error: err.array() });
 
-    const { text, parentCommentId } = req.body;
-    const {postId} = req.params || req.query;
+    const { userId ,text, parentCommentId } = req.body;
+    const {postId} = req.params;
+
+    if(userId !== req.user._id) throw new Error("LoggedIn user Id not match");
 
     const currentPost = await PostModel.findById({_id:postId});
     if (!currentPost) throw new Error("Post does not exits");
@@ -122,6 +125,8 @@ export const commentController = async (req, res) => {
         parentCommentId
       );
 
+      parentComment = isparentCommentIdExists;
+
       if (!isparentCommentIdExists)
         res.status(404).json({ message: "parent comment not found" });
     }
@@ -129,11 +134,11 @@ export const commentController = async (req, res) => {
     const comment = await CommentModel.create({
       text: text,
       postId: postId,
-      userId: req.user._id,
-      parentCommentId,
+      userId: userId,
+      parentCommentId : parentComment.parentCommentId || parentCommentId
     });
 
-    await comment.incrementCommentCount();
+    await currentPost.incrementCommentCount();
 
     res.status(201).json({ data: comment });
   } catch (error) {

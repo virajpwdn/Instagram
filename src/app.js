@@ -5,6 +5,7 @@ import userRouter from "./routes/user.routes.js";
 import aiRouter from "./routes/ai.routes.js";
 import postRouter from "./routes/post.routes.js";
 
+
 const app = express();
 
 app.use(morgan("dev"));

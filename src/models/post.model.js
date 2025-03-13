@@ -10,12 +10,15 @@ const postSchema = new mongoose.Schema(
       required: [true, "Media is required"],
     },
     author: {
-      type: mongoose.Schema.Types
-        .ObjectId /** what is the difference between mongoose.schema.types.ObjectId vs mongoose.types.objectID */,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: [true, "Author is required"],
     },
     likeCount: {
+      type: Number,
+      default: 0,
+    },
+    commentCount: {
       type: Number,
       default: 0,
     },
@@ -69,6 +72,18 @@ postSchema.methods.decrementLike = async function (loggedInuser) {
   this.likeCount -= 1;
   this.whoLiked.pop(loggedInuser);
   await this.save();
+  return this;
+};
+
+postSchema.methods.incrementCommentCount = async function () {
+  this.commentCount += 1;
+  this.save();
+  return this;
+};
+
+postSchema.methods.decrementCommentCount = async function () {
+  this.commentCount -= 1;
+  this.save();
   return this;
 };
 

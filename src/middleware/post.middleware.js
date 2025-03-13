@@ -11,6 +11,13 @@ const upload = multer({
 export const handleFileUpload = upload.single("image");
 
 export const validateComment = [
+  body("userId")
+    .notEmpty()
+    .withMessage("UserId is required")
+    .custom((value) => {
+      return mongoose.Types.ObjectId.isValid(value);
+    })
+    .withMessage("Not valid Id"),
   param("postId")
     .notEmpty()
     .withMessage("Post is required")
