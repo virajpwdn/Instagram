@@ -3,3 +3,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+}
+
+
+@layer utilities {
+  .instagram-gradient {
+    background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+    -webkit-mask: 
+      linear-gradient(white 0 0) content-box, 
+      linear-gradient(white 0 0);
+    mask: 
+      linear-gradient(white 0 0) content-box, 
+      linear-gradient(white 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}

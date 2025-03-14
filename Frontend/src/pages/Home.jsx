@@ -9,7 +9,7 @@ const Home = () => {
       <div className="p-5 left border-2 border-primary w-1/4">
         <Sidebar />
       </div>
-      <div className="right border-2 border-secondary flex-grow">
+      <div className="right border-2 border-secondary flex-grow overflow-hidden">
         <FeedView />
       </div>
     </div>
