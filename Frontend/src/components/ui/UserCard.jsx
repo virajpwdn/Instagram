@@ -7,18 +7,18 @@ import RemixIconComponent from "./RemixIconComponent";
 const UserCard = () => {
   const [isLikedPost, setIsLikedPost] = useState(false);
 
-  const likeHandler = () =>{
+  const likeHandler = () => {
     setIsLikedPost(!isLikedPost);
-  }
+  };
 
   return (
-    <div className="h-full">
+    <div className="border-[1px]">
       <div className="border-2 border-zinc-300 dark:border-backgroundDark">
         <div className="top flex items-center justify-between pt-2 px-2 pb-[4px]">
-          <div className="left w-[70%]">
+          <div className="left truncate">
             <NameCard />
           </div>
-          <div className="right flex items-center gap-4 w-[28%]">
+          <div className="right flex items-center gap-4">
             <ButtonComponent className={`bg-emerald-600 px-2 py-1 text-xs`}>
               Following
             </ButtonComponent>
@@ -77,7 +77,9 @@ const UserCard = () => {
             </div>
           </div>
         </div>
-        <div className="caption"></div>
+        <div className="caption p-2">
+          <p className="font-thin text-sm text-gray-700 dark:text-zinc-200"><span className="text-textLight dark:text-white font-semibold">username </span>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque optio officiis maiores voluptas alias eius, quo in. Eveniet quae reiciendis, quia aspernatur tenetur architecto praesentium quidem qui, cum esse doloribus.</p>
+        </div>
       </div>
     </div>
   );

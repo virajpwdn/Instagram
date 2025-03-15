@@ -10,7 +10,7 @@ const FeedView = () => {
         <Stories />
       </div>
       <div className="bottom flex items-start justify-center border-2 border-green-500 overflow-y-auto min-h-screen scrollbar-hide">
-        <div className="center-container w-1/2 lg:w-[38%] border-2 h-screen">
+        <div className="center-container w-1/2 lg:w-[38%] flex flex-col gap-5">
           <UserCard />
         </div>
       </div>
