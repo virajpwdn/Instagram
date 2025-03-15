@@ -4,14 +4,18 @@ const RemixIconComponent = ({
   name,
   className = "",
   size = 24,
-//   color = "currentColor",
   onClick,
+  onDoubleClick,
+  isActive,
+  activeColor = "text-red-500",
+  defaultColor = "text-textLight dark:text-textDark"
 }) => {
+  const iconClass = isActive ? activeColor : defaultColor
   return (
     <i
-      className={`ri-${name} ${className}`}
-    //   style={{ color }}
+      className={`ri-${name} ${className} ${iconClass}`}   
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
     />
   );
 };

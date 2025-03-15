@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import NameCard from "./NameCard";
 import ButtonComponent from "./ButtonComponent";
 import IconComponent from "./IconComponent";
 import RemixIconComponent from "./RemixIconComponent";
 
 const UserCard = () => {
+  const [isLikedPost, setIsLikedPost] = useState(false);
+
+  const likeHandler = () =>{
+    setIsLikedPost(!isLikedPost);
+  }
+
   return (
     <div className="h-full">
       <div className="border-2 border-zinc-300 dark:border-backgroundDark">
@@ -32,9 +38,11 @@ const UserCard = () => {
           <div className="left flex gap-2  w-2/3">
             <div className="icon-text flex items-center gap-1">
               <RemixIconComponent
-                name="heart-line"
-                className="md:text-[1.8em] dark:text-textDark text-textLight text-xl"
-                color="red"
+                // onClick={likeHandler}
+                onDoubleClick={likeHandler}
+                name={`${isLikedPost ? "heart-fill" : "heart-line"}`}
+                className={`md:text-[1.8em] text-xl`}
+                isActive={isLikedPost}
               />
               <h3 className="text-sm font-poppins font-semibold text-gray-500 dark:text-gray-100">
                 500M
@@ -44,7 +52,6 @@ const UserCard = () => {
               <RemixIconComponent
                 name="chat-3-line"
                 className="md:text-[1.5em] text-xl"
-                color="white"
               />
               <h3 className="text-sm font-poppins font-semibold text-gray-500 dark:text-gray-100">
                 500M
