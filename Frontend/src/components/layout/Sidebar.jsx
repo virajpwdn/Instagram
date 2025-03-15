@@ -6,7 +6,7 @@ import ToggleDarkMode from "../ui/ToggleDarkMode";
 const Sidebar = () => {
   return (
     <div className="text-textLight dark:text-textDark flex flex-col justify-between min-h-screen">
-      <div className="top border-2 border-red-400">
+      <div className="top">
         <div className="flex justify-between items-start">
           <div className="img-fit-div h-24 w-24 rounded-full border-2 border-textLight dark:border-textDark">
             <img
@@ -19,7 +19,9 @@ const Sidebar = () => {
         </div>
 
         <div className="right">
-          <h2 className="pt-3 font-inter tracking-wide font-medium text-lg">Christiano Ronaldo</h2>
+          <h2 className="pt-3 font-inter tracking-wide font-medium text-[0.9rem] md:text-xl">
+            Christiano Ronaldo
+          </h2>
         </div>
       </div>
       <div className="bottom font-inter font-medium tracking-normal leading-none dark:text-textDark">
