@@ -7,7 +7,7 @@ import UserCard from "../components/ui/UserCard";
 
 const MobileHome = () => {
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden relative">
       <div className="top border-2 p-3">
         <div className="left flex items-center justify-between">
           {/* <div className="img-container w-20 bg-primary">
