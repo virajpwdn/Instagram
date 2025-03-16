@@ -1,7 +1,7 @@
 import userModel from "../models/user.js";
 import redis from "./redis.service.js";
 
-export const createUser = async ({ username, email, password }) => {
+export const createUser = async ({ email, password, firstName, username }) => {
   if (!username || !email || !password) {
     throw new Error("All fields are required [username, email, password]");
   }
@@ -17,6 +17,7 @@ export const createUser = async ({ username, email, password }) => {
     username,
     email,
     password: hashPassword,
+    firstName
   });
 
   await user.save();

@@ -10,9 +10,9 @@ export const createUserController = async (req, res) => {
   }
 
   try {
-    const { username, email, password } = req.body;
+    const { email, password, firstName, username } = req.body;
 
-    const user = await userService.createUser({ username, email, password });
+    const user = await userService.createUser({ email, password, firstName, username });
 
     const token = user.generateJWT();
 
