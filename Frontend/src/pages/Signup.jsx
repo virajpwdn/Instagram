@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import ToggleDarkMode from "../components/ui/ToggleDarkMode";
 import RemixIconComponent from "../components/ui/RemixIconComponent";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL } from "../constants/constants";
 
 const Signup = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [error, setError] = useState("");
+
+  const formSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(BASE_URL + "/users/register", {email, password, firstName, username});
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="dark:bg-black overflow-hidden text-textLight dark:text-textDark min-h-screen flex flex-col justify-center items-center gap-3 font-inter pb-16">
       <ToggleDarkMode />
@@ -24,26 +41,46 @@ const Signup = () => {
           </div>
         </div>
         <div className="center">
-          <form className="flex flex-col gap-2 text-textLight dark:text-textDark">
+          <form
+            id="signupForm"
+            onSubmit={formSubmitHandler}
+            className="flex flex-col gap-2 text-textLight dark:text-textDark"
+          >
             <input
               className="border-[1px] text-sm border-[#DBDBDB] outline-none bg-[#FAFAFA] dark:bg-[#121212] rounded-[3px] p-2 placeholder:font-light placeholder:text-gray-400 placeholder:text-sm"
               type="email"
               placeholder="Email address"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
             <input
               className="border-[1px] text-sm border-[#DBDBDB] outline-none bg-[#FAFAFA] dark:bg-[#121212] rounded-[3px] p-2 placeholder:font-light placeholder:text-gray-400 placeholder:text-sm"
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
             <input
               className="border-[1px] text-sm border-[#DBDBDB] outline-none bg-[#FAFAFA] dark:bg-[#121212] rounded-[3px] p-2 placeholder:font-light placeholder:text-gray-400 placeholder:text-sm"
               type="text"
-              placeholder="Full Name"
+              placeholder="Full Name or Firstname"
+              value={firstName}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+              }}
             />
             <input
               className="border-[1px] text-sm border-[#DBDBDB] outline-none bg-[#FAFAFA] dark:bg-[#121212] rounded-[3px] p-2 placeholder:font-light placeholder:text-gray-400 placeholder:text-sm"
               type="text"
               placeholder="username"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
             />
           </form>
         </div>
@@ -56,7 +93,11 @@ const Signup = () => {
             By signing up, you agree to our Terms, Privacy Policy and Cookies
             Policy.
           </p>
-          <button className="bg-[#0095F6] hover:bg-[#1977F2] text-white font-semibold px-24 py-[0.4rem] rounded-md">
+          <button
+            form="signupForm"
+            type="submit"
+            className="bg-[#0095F6] hover:bg-[#1977F2] text-white font-semibold px-24 py-[0.4rem] rounded-md"
+          >
             <RemixIconComponent />
             Sign up
           </button>
@@ -64,7 +105,9 @@ const Signup = () => {
       </div>
       <div className="login-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex flex-col gap-1 justify-center items-center border-[1px] rounded-[3px] border-opacity-60 border-[#363636] p-5 px-10">
         <p>Have an account?</p>
-        <Link className="text-[#0095F6] font-semibold" to="/login">Log in</Link>
+        <Link className="text-[#0095F6] font-semibold" to="/login">
+          Log in
+        </Link>
       </div>
     </div>
   );
