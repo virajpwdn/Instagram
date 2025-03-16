@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ToggleDarkMode from "../components/ui/ToggleDarkMode";
 import RemixIconComponent from "../components/ui/RemixIconComponent";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ const Signup = () => {
   return (
     <div className="dark:bg-black overflow-hidden text-textLight dark:text-textDark min-h-screen flex flex-col justify-center items-center gap-3 font-inter pb-16">
       <ToggleDarkMode />
-      <div className="form-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex-shrink-0 border-[1px] rounded-[3px] border-opacity-30 border-[#363636] p-5 px-10">
+      <div className="form-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex-shrink-0 border-[1px] rounded-[3px] border-opacity-60 border-[#363636] p-5 px-10">
         <div className="top flex flex-col gap-3 py-3 items-center justify-center">
           <h1 className="font-bold text-5xl font-caveat">Instagram</h1>
           <p className="text-center text-[#A8A8A8] font-semibold tracking-tight leading-1">
@@ -62,7 +62,7 @@ const Signup = () => {
           </button>
         </div>
       </div>
-      <div className="login-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex flex-col gap-1 justify-center items-center border-[1px] rounded-[3px] border-opacity-30 border-[#363636] p-5 px-10">
+      <div className="login-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex flex-col gap-1 justify-center items-center border-[1px] rounded-[3px] border-opacity-60 border-[#363636] p-5 px-10">
         <p>Have an account?</p>
         <Link className="text-[#0095F6] font-semibold" to="/login">Log in</Link>
       </div>
