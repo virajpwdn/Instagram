@@ -24,6 +24,7 @@ export default {
         poppins: ["Poppins", ...defaultTheme.fontFamily.sans],
         montserrat: ["Montserrat", ...defaultTheme.fontFamily.sans],
         inter: ["Inter", ...defaultTheme.fontFamily.sans],
+        caveat: ["Caveat", ...defaultTheme.fontFamily.sans],
       },
     },
   },

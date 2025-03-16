@@ -13,7 +13,7 @@ const MobileHome = () => {
           {/* <div className="img-container w-20 bg-primary">
             <img src="/Instagram_logo.PNG" alt="" />
           </div> */} 
-          <h1 className="font-bold text-2xl font-poppins">Instagram</h1>
+          <h1 className="font-extrabold text-4xl font-caveat">Instagram</h1>
           <div className="right flex items-center gap-3">
             <ToggleDarkMode />
             <RemixIconComponent name="add-box-line" className="text-2xl" />
