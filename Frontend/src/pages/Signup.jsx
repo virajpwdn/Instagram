@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import ToggleDarkMode from "../components/ui/ToggleDarkMode";
 import RemixIconComponent from "../components/ui/RemixIconComponent";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../constants/constants";
+import { useDispatch } from "react-redux";
+import { addUser } from "../store/userSlice";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -11,14 +13,25 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(BASE_URL + "/users/register", {email, password, firstName, username});
-      console.log(response.data);
+      const response = await axios.post(BASE_URL + "/users/register", {
+        email,
+        password,
+        firstName,
+        username,
+      });
+      dispatch(addUser(response.data.user));
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      navigate("/home")
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.errors);
+      setError(error.response.data.errors);
     }
   };
   return (
@@ -34,15 +47,15 @@ const Signup = () => {
             <RemixIconComponent />
             Log In with Facebook
           </button>
-          <div class="flex items-center w-full justify-center my-2">
-            <div class="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
-            <span class="px-4 text-gray-500 font-bold">OR</span>
-            <div class="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
+          <div className="flex items-center w-full justify-center my-2">
+            <div className="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
+            <span className="px-4 text-gray-500 font-bold">OR</span>
+            <div className="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
           </div>
         </div>
         <div className="center">
           <form
-            id="signupForm"
+            id="submitSignUpForm"
             onSubmit={formSubmitHandler}
             className="flex flex-col gap-2 text-textLight dark:text-textDark"
           >
@@ -94,7 +107,7 @@ const Signup = () => {
             Policy.
           </p>
           <button
-            form="signupForm"
+            form="submitSignUpForm"
             type="submit"
             className="bg-[#0095F6] hover:bg-[#1977F2] text-white font-semibold px-24 py-[0.4rem] rounded-md"
           >

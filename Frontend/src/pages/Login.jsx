@@ -31,10 +31,10 @@ const Login = () => {
             <RemixIconComponent />
             Sign up
           </button>
-          <div class="flex items-center w-full justify-center my-2">
-            <div class="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
-            <span class="px-4 text-gray-500 font-bold">OR</span>
-            <div class="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
+          <div className="flex items-center w-full justify-center my-2">
+            <div className="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
+            <span className="px-4 text-gray-500 font-bold">OR</span>
+            <div className="flex-1 border-t border-[0.5px] border-opacity-30 border-gray-300"></div>
           </div>
         </div>
         <button className="flex items-center font-medium font-inter w-full gap-2 text-[#1977F2] hover:text-textLight hover:dark:text-textDark justify-center text-sm"><RemixIconComponent name="facebook-circle-fill" className="text-2xl text-[#1977F2] dark:text-[#1977F2]" /> Login in with Facebook</button>
