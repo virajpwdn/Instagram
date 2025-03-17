@@ -9,7 +9,7 @@ const App = () => {
   const isMobile = window.innerWidth <= 640;
 
   return (
-    <main className="dark:bg-backgroundDark bg-backgroundLight min-h-screen font-inter">
+    <main className="dark:bg-backgroundDark bg-backgroundLight text-textLight dark:text-textDark min-h-screen font-inter">
       <section
         className={`${
           isMobile
