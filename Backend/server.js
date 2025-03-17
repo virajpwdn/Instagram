@@ -6,7 +6,7 @@ import initSocket from "./src/sockets/socket.io.js";
 
 const server = http.createServer(app);
 connectDB();
-initSocket(server);
+initSocket(server); 
 
 
 

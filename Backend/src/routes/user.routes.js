@@ -9,7 +9,7 @@ userRouter.post(
   userMiddleware.registerUserValidation,
   userController.createUserController
 );
-
+ 
 userRouter.post(
   "/login",
   userMiddleware.loginValidation,
