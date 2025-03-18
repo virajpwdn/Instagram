@@ -9,4 +9,10 @@ connectionRouter.post(
   controller.requestSendController
 );
 
+connectionRouter.post(
+  "/review/:documentId",
+  userMiddleware.authUser,
+  controller.requestReviewController
+);
+
 export default connectionRouter;
