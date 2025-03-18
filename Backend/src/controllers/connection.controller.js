@@ -1,7 +1,7 @@
 import UserModel from "../models/user.js";
 import FollowerModel from "../models/followers.model.js";
 import mongoose from "mongoose";
-import * as validation from "../validations/connections.validation.js"
+import * as validation from "../validations/connections.validation.js";
 
 export const requestSendController = async (req, res) => {
   try {
@@ -32,9 +32,11 @@ export const requestSendController = async (req, res) => {
     // if (isRequestAlreadyExists) throw new Error("Request is already sent");
     if (isRequestAlreadyExists) {
       const deleteFollowing = await isRequestAlreadyExists.deleteOne();
-      if(sender.following.includes(receiverId)){
+      if (sender.following.includes(receiverId)) {
         sender.following.pop(receiverId);
+        receiver.followers.pop(senderId);
         await sender.save();
+        await receiver.save();
       }
       return res
         .status(200)
@@ -72,27 +74,52 @@ export const requestSendController = async (req, res) => {
   }
 };
 
-
-export const requestReviewController = async (req,res)=>{
+export const requestReviewController = async (req, res) => {
   try {
-    const {senderId, status, username} = req.body;
-    const {documentId} = req.params;
-    const validateData = validation.requestReviewValidations({senderId, status, documentId, loggedInUserId: req.user._id})
-    if(validateData.error) throw new Error(validateData.error);
+    // This senderId is of the loggedin user who is sending review frontend
+    const { senderId, status, username } = req.body;
+    const { documentId } = req.params;
+    const validateData = validation.requestReviewValidations({
+      senderId,
+      status,
+      documentId,
+      loggedInUserId: req.user._id,
+    });
+    if (validateData.error) throw new Error(validateData.error);
+
+    const user = await UserModel.findById(senderId);
+
+    if (!user) throw new Error("User not found");
 
     const findDocument = await FollowerModel.findById(documentId);
-    if(!findDocument) throw new Error("Document does not exits");
+    if (findDocument.status === "following")
+      return res.status(200).json({ message: "You have already followed" });
+    if (!findDocument) throw new Error("Document does not exits");
 
-    if(status === "accept"){
-      findDocument.status = "accept"
+    const receivingUser = await UserModel.findById(findDocument.senderId);
+    if (!receivingUser) throw new Error("Receiving user not found");
+
+    if (status === "accept") {
+      findDocument.status = "following";
       await findDocument.save();
-      return res.status(200).json({message: `You have accepted request of ${username}`})
-    }else {
-      await findDocument.deleteOne();
-      return res.status(200).json({message: `Request Rejected`})
-    }
+      user.followers.push(
+        findDocument.senderId
+      ); /* This sender is from document which is of fromUserId the persone who sent request */
 
+      // user.followers.push(findDocument.senderId);
+      receivingUser.following.push(req.user._id);
+
+      await receivingUser.save();
+      await user.save();
+
+      return res
+        .status(200)
+        .json({ message: `You have accepted request of ${username}` });
+    } else {
+      await findDocument.deleteOne();
+      return res.status(200).json({ message: `Request Rejected` });
+    }
   } catch (error) {
-    res.status(400).json({message: error.message})
+    res.status(400).json({ message: error.message });
   }
-}
+};
