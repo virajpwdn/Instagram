@@ -43,6 +43,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     select: false,
   },
+  isFollowing: {
+    type: Boolean,
+    default: false,
+  },
+  isPrivate: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 userSchema.statics.hashPassword = async function (password) {
