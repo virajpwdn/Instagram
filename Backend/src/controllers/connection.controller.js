@@ -123,3 +123,21 @@ export const requestReviewController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getAllConnections = async (req, res) => {
+  try {
+    const { loggedInUserId } = req.params;
+    // if (loggedInUserId.toString() !== req.user._id.toString())
+    //   throw new Error("Login id did not match");
+    const getAllFriends = await FollowerModel.find({
+      $and: [{ receiverId: req.user._id }, { status: "following" }],
+    });
+
+    if (!getAllFriends)
+      throw new Error("No Friends, follow people on instagram");
+
+    res.status(200).json({ data: getAllFriends });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

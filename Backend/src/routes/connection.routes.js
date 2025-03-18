@@ -15,4 +15,10 @@ connectionRouter.post(
   controller.requestReviewController
 );
 
+connectionRouter.get(
+  "/allconnections/:loginUserId",
+  userMiddleware.authUser,
+  controller.getAllConnections
+);
+
 export default connectionRouter;
