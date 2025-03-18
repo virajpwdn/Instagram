@@ -43,9 +43,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     select: false,
   },
-  isFollowing: {
-    type: Boolean,
-    default: false,
+  followers: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "user",
+  },
+  following: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "user",
   },
   isPrivate: {
     type: Boolean,
