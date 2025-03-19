@@ -20,6 +20,8 @@ userRouter.get("/profile", userMiddleware.authUser, (req, res) => {
   res.send(req.user);
 });
 
+userRouter.get("/feed")
+
 userRouter.get(
   "/logout",
   userMiddleware.authUser,

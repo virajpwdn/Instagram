@@ -127,17 +127,77 @@ export const requestReviewController = async (req, res) => {
 export const getAllConnections = async (req, res) => {
   try {
     const { loggedInUserId } = req.params;
-    // if (loggedInUserId.toString() !== req.user._id.toString())
-    //   throw new Error("Login id did not match");
-    const getAllFriends = await FollowerModel.find({
-      $and: [{ receiverId: req.user._id }, { status: "following" }],
-    });
+    const userId = new mongoose.Types.ObjectId(req.user._id);
 
-    if (!getAllFriends)
-      throw new Error("No Friends, follow people on instagram");
+    // const isValidObjectId = loggedInUserId instanceof mongoose.Types.ObjectId ? loggedInUserId : new mongoose.Types.ObjectId(loggedInUserId)
 
-    res.status(200).json({ data: getAllFriends });
+    const feed = await UserModel.aggregate([
+      { $match: { _id: userId  } },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "followers",
+          foreignField: "_id",
+          as: "followerData",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "following",
+          foreignField: "_id",
+          as: "followingData",
+        },
+      },
+
+      {
+        $addFields: {
+          friends: { $setUnion: ["$followerData", "$followingData"] },
+        },
+      },
+
+      { $unwind: "$friends" },
+
+      {
+        $lookup: {
+          from: "posts",
+          localField: "friends._id",
+          foreignField: "author",
+          as: "friendsPosts",
+        },
+      },
+
+      {
+        $group: {
+          _id: "$_id",
+          feedPosts: {
+            $push: {
+              user: "$friends",
+              posts: "$friendsPosts",
+            },
+          },
+        },
+      },
+    ]);
+
+    console.log(feed);
+
+    if(!feed) throw new Error("Something went wrong");
+    // res.status(200).json({feed})
+
+    // if (!getAllFriends)
+    //   throw new Error("No Friends, follow people on instagram");
+
+    res.status(200).json({ data: feed });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
+// if (loggedInUserId.toString() !== req.user._id.toString())
+//     //   throw new Error("Login id did not match");
+// const getAllFriends = await FollowerModel.find({
+//   $and: [{ receiverId: req.user._id }, { status: "following" }],
+// });
