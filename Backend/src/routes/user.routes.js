@@ -9,18 +9,24 @@ userRouter.post(
   userMiddleware.registerUserValidation,
   userController.createUserController
 );
- 
+
 userRouter.post(
   "/login",
   userMiddleware.loginValidation,
   userController.loginController
 );
 
-userRouter.get("/profile", userMiddleware.authUser, (req, res) => {
-  res.send(req.user);
-});
+// userRouter.get("/profile", userMiddleware.authUser, (req, res) => {
+//   res.send(req.user);
+// });
 
-userRouter.get("/feed")
+userRouter.get(
+  "/profile/:loginUserId",
+  userMiddleware.authUser,
+  userController.userProfileController
+);
+
+// userRouter.get("/feed")
 
 userRouter.get(
   "/logout",

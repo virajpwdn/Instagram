@@ -126,13 +126,18 @@ export const requestReviewController = async (req, res) => {
 
 export const getAllConnections = async (req, res) => {
   try {
-    const { loggedInUserId } = req.params;
+    const { loginUserId } = req.params;
+    if (!loginUserId) throw new Error("Login user id is required");
+
+    if (loginUserId.toString() !== req.user._id.toString())
+      throw new Error("Invalid login user id");
+
     const userId = new mongoose.Types.ObjectId(req.user._id);
 
-    // const isValidObjectId = loggedInUserId instanceof mongoose.Types.ObjectId ? loggedInUserId : new mongoose.Types.ObjectId(loggedInUserId)
+    
 
     const feed = await UserModel.aggregate([
-      { $match: { _id: userId  } },
+      { $match: { _id: userId } },
 
       {
         $lookup: {
@@ -155,6 +160,14 @@ export const getAllConnections = async (req, res) => {
       {
         $addFields: {
           friends: { $setUnion: ["$followerData", "$followingData"] },
+        },
+      },
+
+      {
+        $project: {
+          /* It selected password field and removed the field not the value */
+          "friends.password": 0,
+          "friends.email": 0,
         },
       },
 
@@ -182,22 +195,14 @@ export const getAllConnections = async (req, res) => {
       },
     ]);
 
-    console.log(feed);
-
-    if(!feed) throw new Error("Something went wrong");
-    // res.status(200).json({feed})
-
-    // if (!getAllFriends)
-    //   throw new Error("No Friends, follow people on instagram");
+    if (!feed.length) {
+      return res
+        .status(404)
+        .json({ message: "feed is empty, follow people on instagram" });
+    }
 
     res.status(200).json({ data: feed });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
-
-// if (loggedInUserId.toString() !== req.user._id.toString())
-//     //   throw new Error("Login id did not match");
-// const getAllFriends = await FollowerModel.find({
-//   $and: [{ receiverId: req.user._id }, { status: "following" }],
-// });

@@ -2,6 +2,8 @@ import userModel from "../models/user.js";
 import { validationResult } from "express-validator";
 import * as userService from "../services/user.service.js";
 import redis from "../services/redis.service.js";
+import postModel from "../models/post.model.js";
+import mongoose from "mongoose";
 
 export const createUserController = async (req, res) => {
   const error = validationResult(req);
@@ -12,7 +14,12 @@ export const createUserController = async (req, res) => {
   try {
     const { email, password, firstName, username } = req.body;
 
-    const user = await userService.createUser({ email, password, firstName, username });
+    const user = await userService.createUser({
+      email,
+      password,
+      firstName,
+      username,
+    });
 
     const token = user.generateJWT();
 
@@ -56,6 +63,42 @@ export const logoutController = async (req, res) => {
     res.send("logout");
   } catch (error) {
     console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const userProfileController = async (req, res) => {
+  try {
+    const { loginUserId } = req.params;
+    if (!loginUserId) throw new Error("Login userId is required");
+    if (loginUserId.toString() !== req.user._id.toString())
+      throw new Error("ID not matched");
+
+    const userId = req.user._id instanceof mongoose.Types.ObjectId ? req.user._id : new mongoose.Types.ObjectId(req.user._id)
+
+    const userProfile = await userModel.aggregate([
+      {
+        $match: { _id: userId },
+      },
+      {
+        $lookup: {
+          from: "posts", 
+          localField: "_id", 
+          foreignField: "author", 
+          as: "userPosts", // 
+        },
+      },
+      {$project: {password: 0, email: 0}}
+    ]);
+
+    //? if userProfile returns empty for userposts means there are no posts which users have created. so when we will map overit on frontend it will give error. so add conditional rendering if users posts are not present then it should show empty
+
+    if (!userProfile.length) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ data: userProfile[0] });
+  } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
