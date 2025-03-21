@@ -55,6 +55,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  bio: {
+    type: String,
+    maxLength: [100, "Maximum length of bio should be upto 100 character"],
+    default: "",
+  },
+  isPremium: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.statics.hashPassword = async function (password) {
