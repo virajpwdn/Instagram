@@ -4,6 +4,7 @@ import * as userService from "../services/user.service.js";
 import redis from "../services/redis.service.js";
 import postModel from "../models/post.model.js";
 import mongoose from "mongoose";
+import followerModel from "../models/followers.model.js";
 
 export const createUserController = async (req, res) => {
   const error = validationResult(req);
@@ -74,7 +75,10 @@ export const userProfileController = async (req, res) => {
     if (loginUserId.toString() !== req.user._id.toString())
       throw new Error("ID not matched");
 
-    const userId = req.user._id instanceof mongoose.Types.ObjectId ? req.user._id : new mongoose.Types.ObjectId(req.user._id)
+    const userId =
+      req.user._id instanceof mongoose.Types.ObjectId
+        ? req.user._id
+        : new mongoose.Types.ObjectId(req.user._id);
 
     const userProfile = await userModel.aggregate([
       {
@@ -82,13 +86,13 @@ export const userProfileController = async (req, res) => {
       },
       {
         $lookup: {
-          from: "posts", 
-          localField: "_id", 
-          foreignField: "author", 
-          as: "userPosts", // 
+          from: "posts",
+          localField: "_id",
+          foreignField: "author",
+          as: "userPosts", //
         },
       },
-      {$project: {password: 0, email: 0}}
+      { $project: { password: 0, email: 0 } },
     ]);
 
     //? if userProfile returns empty for userposts means there are no posts which users have created. so when we will map overit on frontend it will give error. so add conditional rendering if users posts are not present then it should show empty
@@ -98,6 +102,40 @@ export const userProfileController = async (req, res) => {
     }
 
     res.status(200).json({ data: userProfile[0] });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const toUserProfileController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) throw new Error("user Id is required");
+    const isvalidMongoId = mongoose.Types.ObjectId.isValid(userId);
+    if (!isvalidMongoId) throw new Error("ID is invalid");
+
+    const user = await userModel.findById(userId);
+    if (!user) throw new Error("User Not Exists");
+
+    const isFollowing = await followerModel.find({
+      $or: [
+        { senderId: req.user._id, receiverId: userId, status: "following" },
+        { senderId: userId, receiverId: req.user._id, status: "following" },
+      ],
+    });
+
+    if (isFollowing.length === 0) {
+      return res
+        .status(401)
+        .json({ data: user, posts: false, message: "follow to view posts" });
+    }
+
+
+    const posts = await postModel.find({ author: userId });
+    if (posts.length === 0)
+      return res.status(200).json({ data: user, message: "No Posts!" });
+    // delete user._doc.password
+    res.status(200).json({ data: user, posts: posts });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

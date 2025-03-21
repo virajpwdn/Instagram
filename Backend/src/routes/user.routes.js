@@ -26,7 +26,11 @@ userRouter.get(
   userController.userProfileController
 );
 
-// userRouter.get("/feed")
+userRouter.get(
+  "/profile-touser/:userId",
+  userMiddleware.authUser,
+  userController.toUserProfileController
+);
 
 userRouter.get(
   "/logout",
