@@ -14,7 +14,7 @@ const App = () => {
         className={`${
           isMobile
             ? "border-2 border-green-500 min-h-screen"
-            : "w-full border-2 border-secondary"
+            : "w-full border-2 border-primary flex items-center justify-center"
         }`}
       >
         <AppRoutes />

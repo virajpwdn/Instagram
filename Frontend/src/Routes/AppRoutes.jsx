@@ -5,6 +5,7 @@ import Signup from "../pages/Signup";
 import MobileHome from "../pages/MobileHome";
 import Login from "../pages/Login";
 import ProtectedRoutes from "./ProtectedRoutes";
+import Profile from "../pages/Profile";
 
 const AppRoutes = () => {
   //TODO This approach of rendering two components over here will cause performance issues later, becuases it is rendering both the compoents for mobile view as well as for desktop view. TO fix this later add conditional rendering and also add debouncer in it which later will improve performance, There is a very big bug in this right now and that is while this 2 pages are being rendered there are 2 forms rendered and both of this forms have same ID, it can cause app to crash, FIX THIS ASAP
@@ -18,18 +19,19 @@ const AppRoutes = () => {
           element={
             <>
               <div className="desktop hidden sm:block">
-                <ProtectedRoutes>
+                {/* <ProtectedRoutes> */}
                   <Home />
-                </ProtectedRoutes>
+                {/* </ProtectedRoutes> */}
               </div>
               <div className="mobile sm:hidden">
-                <ProtectedRoutes>
+                {/* <ProtectedRoutes> */}
                   <MobileHome />
-                </ProtectedRoutes>
+                {/* </ProtectedRoutes> */}
               </div>
             </>
           }
         />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

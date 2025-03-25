@@ -35,7 +35,7 @@ const Signup = () => {
     }
   };
   return (
-    <div className="dark:bg-black overflow-hidden text-textLight dark:text-textDark min-h-screen flex flex-col justify-center items-center gap-3 font-inter pb-16">
+    <div className="dark:bg-black overflow-hidden text-textLight dark:text-textDark min-h-screen flex flex-col justify-center items-center gap-3 font-inter pb-16 w-full">
       <ToggleDarkMode />
       <div className="form-container w-[100%] max-sm:border-none sm:w-[25%] max-w-[400px] min-w-[400px] flex-shrink-0 border-[1px] rounded-[3px] border-opacity-60 border-[#363636] p-5 px-10">
         <div className="top flex flex-col gap-3 py-3 items-center justify-center">
