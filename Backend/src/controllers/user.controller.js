@@ -34,7 +34,7 @@ export const createUserController = async (req, res) => {
 export const loginController = async (req, res) => {
   const error = validationResult(req);
   if (!error.isEmpty()) {
-    res.status(400).json({ errors: error.array() });
+    return res.status(400).json({ errors: error.array() });
   }
 
   try {
@@ -140,3 +140,5 @@ export const toUserProfileController = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
